@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 function SearchFriends() {
   const [keyword, setKeyword] = useState("");
@@ -10,9 +10,9 @@ function SearchFriends() {
   const handleSearch = async () => {
     try {
       const username = JSON.parse(localStorage.getItem("user"))?.username;
-      const res = await axios.get(`http://localhost:8081/friends/search`, {
+    const res = await axiosClient.get(`/friends/search`, {
         params: { keyword, currentUser: username },
-         headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       setResults(res.data);
     } catch (error) {
@@ -29,13 +29,12 @@ function SearchFriends() {
     }
 
     try {
-        await axios.post(
-            // Chỉ truyền toUser, Backend sẽ lấy fromUser từ token
-            `http://localhost:8081/friends/sendRequest?toUser=${toUser}`,
-            null,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
-        alert(`✅ Đã gửi lời mời kết bạn đến ${toUser}`);
+        await axiosClient.post(
+        `/friends/sendRequest?toUser=${toUser}`,
+        null,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert(`✅ Đã gửi lời mời kết bạn đến ${toUser}`);
         
         // Cải tiến UX: Xóa người dùng khỏi danh sách kết quả tìm kiếm sau khi gửi
         setResults(prev => prev.filter(user => user.username !== toUser));

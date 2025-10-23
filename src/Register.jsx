@@ -1,37 +1,47 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom"; // 👈 thêm dòng này
+import axiosClient from "./api/axiosClient";
 
 export default function Register() {
-    const [form, setForm] =useState({
-        username: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    })
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
 
-    const [message, setMessage] = useState("");
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate(); // 👈 tạo navigate
 
-    const handleChange = (e) => {
-        setForm({...form, [e.target.name]: e.target.value});
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+       const res = await axiosClient.post("/api/auth/register", form);
+      setMessage("Đăng ký thành công. Xin chào " + res.data.username);
+
+      // 👇 Sau 1 giây quay về trang Login
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000);
+
+    } catch (err) {
+      if (err.response) {
+        setMessage(err.response.data);
+      } else {
+        setMessage("Đăng ký thất bại. do server error");
+      }
     }
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try{
-            const res = await axios.post("http://localhost:8081/api/auth/register", form);
-            setMessage("Đăng ký thành công. Xin chào "+res.data.username);
-            setForm({username: '', email: '', password: '', confirmPassword: ''});
-        }catch(err){
-            if(err.response ){
-                setMessage(err.response.data);
-            }
-            else{
-                setMessage("Đăng ký thất bại. do server error");
-            }
-        }
-    }
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-image bg-cover bg-center" style={{ backgroundImage: "url('/bgrRGT.jpg')" }}>
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-image bg-cover bg-center"
+      style={{ backgroundImage: "url('/bgrRGT.jpg')" }}
+    >
       <form
         onSubmit={handleSubmit}
         className="backdrop-blur-lg bg-white/30 shadow-xl rounded-2xl p-6 w-96 h-[400px] space-y-4 flex flex-col items-center border border-white/40"
@@ -92,5 +102,5 @@ export default function Register() {
         )}
       </form>
     </div>
-  )
+  );
 }

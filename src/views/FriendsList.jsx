@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 function FriendsList() {
   const [friends, setFriends] = useState([]);
@@ -10,22 +10,47 @@ function FriendsList() {
 
   const fetchFriends = async () => {
     try {
-      const username = "alice"; //thay bằng username người đang đăng nhập
-      const res = await axios.get(`http://localhost:8081/friends/${username}`);
+      // Lấy thông tin người đang đăng nhập từ localStorage
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      const username = storedUser?.username;
+      const token = localStorage.getItem("token");
+
+      if (!username || !token) {
+        console.error("❌ Không tìm thấy username hoặc token.");
+        return;
+      }
+
+      // Gọi API với axiosClient
+      const res = await axiosClient.get(`/friends/${username}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setFriends(res.data);
     } catch (error) {
-      console.error("Lỗi khi lấy danh sách bạn bè:", error);
+      console.error("❌ Lỗi khi lấy danh sách bạn bè:", error);
     }
   };
 
   return (
-    <div>
-      <h2>Danh sách bạn bè</h2>
-      <ul>
-        {friends.map(friend => (
-          <li key={friend.id}>{friend.username}</li>
-        ))}
-      </ul>
+    <div className="p-6 bg-white rounded-2xl shadow-custom-down-blue animate-fadeIn">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        Danh sách bạn bè
+      </h2>
+
+      {friends.length === 0 ? (
+        <p className="text-gray-500">Bạn chưa có bạn nào</p>
+      ) : (
+        <ul className="space-y-3">
+          {friends.map((friend) => (
+            <li
+              key={friend.id}
+              className="p-3 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition"
+            >
+              {friend.username}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

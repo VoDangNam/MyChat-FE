@@ -2,8 +2,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom"; 
 import { connectWebSocket, sendPrivateMessage } from "../socketService";
-import axios from "axios";
 import { Send, User, MessageSquare } from "lucide-react";
+import axiosClient from "../api/axiosClient";
 
 export default function ChatView() {
   const { friendUsername } = useParams(); 
@@ -18,7 +18,7 @@ export default function ChatView() {
   useEffect(() => {
     if (!friendUsername) return;
 
-    axios.get(`http://localhost:8081/messages?user1=${username}&user2=${friendUsername}`)
+    axiosClient.get(`/messages?user1=${username}&user2=${friendUsername}`)
       .then(res => setMessages(res.data))
       .catch(error => console.error("Error fetching messages:", error)); 
 

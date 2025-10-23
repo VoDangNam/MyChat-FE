@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+
+
 
 import Login from "./Login";
 import HomeAdmin from "./HomeAdmin";
@@ -14,6 +15,7 @@ import FriendRequests from "./views/FriendRequests";
 import FriendsList from "./views/FriendsList";
 import Home from "./Home.JSX";
 import Register from "./Register";
+import axiosClient from "./api/axiosClient";
 
 function App() {
   const role = localStorage.getItem("role");
@@ -25,7 +27,7 @@ function App() {
   const fetchFriends = async () => {
     if (!username) return;
     try {
-      const res = await axios.get(`http://localhost:8081/friends/${username}`);
+     const res = await axiosClient.get(`/friends/${username}`);
       setFriends(res.data);
     } catch (error) {
       console.error("Lỗi load friends:", error);

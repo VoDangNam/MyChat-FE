@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 function FriendRequests() {
   const [requests, setRequests] = useState([]);
@@ -25,9 +25,10 @@ function FriendRequests() {
     } // Bỏ qua việc lấy username, vì nó không cần thiết cho URL này nữa // const currentUsername = getUsername(); // if (!currentUsername) return;
     try {
       // 🛑 SỬA LỖI 404: Xóa ${currentUsername} khỏi URL
-      const res = await axios.get(`http://localhost:8081/friends/requests`, {
+      const res = await axiosClient.get(`/friends/requests`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       console.log("Requests:", res.data);
       setRequests(res.data.map((req) => ({ ...req, action: "pending" })));
     } catch (error) {
@@ -37,10 +38,12 @@ function FriendRequests() {
   // Chấp nhận lời mời kết bạn
   const acceptRequest = async (requestId) => {
     try {
-      await axios.post(
-        `http://localhost:8081/friends/acceptRequest?requestId=${requestId}`,
+      await axiosClient.post(
+        `/friends/acceptRequest?requestId=${requestId}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       // Cập nhật UI: đổi trạng thái sang "accepted"
@@ -51,9 +54,10 @@ function FriendRequests() {
       );
 
       // Lưu danh sách bạn bè mới (nếu cần)
-      const friendsRes = await axios.get("http://localhost:8081/friends/me", {
+      const friendsRes = await axiosClient.get(`/friends/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       localStorage.setItem("friends", JSON.stringify(friendsRes.data));
     } catch (error) {
       console.error("❌ Lỗi khi chấp nhận:", error);
@@ -66,10 +70,12 @@ function FriendRequests() {
   // Từ chối lời mời kết bạn
   const declineRequest = async (requestId) => {
     try {
-      await axios.post(
-        `http://localhost:8081/friends/declineRequest?requestId=${requestId}`,
+      await axiosClient.post(
+        `/friends/declineRequest?requestId=${requestId}`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
       // Cập nhật UI: đổi trạng thái sang "declined" thay vì xóa hẳn
