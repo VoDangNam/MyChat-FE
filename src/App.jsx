@@ -13,9 +13,10 @@ import ArchiveView from "./views/ArchiveView";
 import SearchFriends from "./views/SearchFriends";
 import FriendRequests from "./views/FriendRequests";
 import FriendsList from "./views/FriendsList";
-import Home from "./Home.JSX";
+
 import Register from "./Register";
 import axiosClient from "./api/axiosClient";
+import Home from './Home.jsx';
 
 function App() {
   const role = localStorage.getItem("role");
