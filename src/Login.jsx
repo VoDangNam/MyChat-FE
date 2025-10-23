@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosClient from "./api/axiosClient";
 
-
-const Login = () => {
+// 1. NHẬN PROP `onLoginSuccess` TỪ APP.JSX
+const Login = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); //chuyển hướng redirect
@@ -16,9 +16,8 @@ const Login = () => {
         password,
       });
 
+      // Lưu localStorage (giữ nguyên)
       localStorage.setItem("token", res.data.token);
-
-      // Lưu cả username và role vào 1 object trong localStorage (dùng chung)
       localStorage.setItem(
         "user",
         JSON.stringify({
@@ -26,13 +25,15 @@ const Login = () => {
           role: res.data.role,
         })
       );
-
-      // Đồng thời lưu riêng từng giá trị để các chỗ khác trong app có thể lấy bằng
-      // localStorage.getItem('username') / localStorage.getItem('role')
       localStorage.setItem("username", res.data.username);
       localStorage.setItem("role", res.data.role);
 
-      // Điều hướng dựa theo role
+      // 2. GỌI HÀM CALLBACK CỦA APP.JSX
+      // Báo cho App.jsx cập nhật state `role` và `username`
+      onLoginSuccess();
+
+      // 3. Điều hướng (giữ nguyên)
+      // Vì App.jsx đã cập nhật state, nên lần này điều hướng sẽ thành công
       if (res.data.role === "ADMIN") navigate("/homeAdmin");
       else if (res.data.role === "USER") navigate("/chat");
     } catch (error) {
