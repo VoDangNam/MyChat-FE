@@ -17,7 +17,7 @@ import Register from "./Register";
 import axiosClient from "./api/axiosClient";
 // 2. SỬA LỖI BUILD: Đổi ".JSX" thành ".jsx".
 // Server Render (Linux) phân biệt hoa thường, nó sẽ báo lỗi nếu bạn viết hoa .JSX
-import Home from './Home.jsx'; 
+import Home from "./Home.jsx";
 
 function App() {
   // 3. DÙNG useState thay vì const
@@ -37,9 +37,9 @@ function App() {
 
   // fetch danh sách bạn bè
   const fetchFriends = async () => {
-    if (!username) return; // Giờ nó dùng state `username`
+    if (!username) return; 
     try {
-      const res = await axiosClient.get(`/friends/${username}`);
+      const res = await axiosClient.get(`/friends/M`);
       setFriends(res.data);
     } catch (error) {
       console.error("Lỗi load friends:", error);
@@ -54,9 +54,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* 5. TRUYỀN HÀM CALLBACK xuống Login */}
-        <Route 
-          path="/login" 
-          element={<Login onLoginSuccess={handleLoginSuccess} />} 
+        <Route
+          path="/login"
+          element={<Login onLoginSuccess={handleLoginSuccess} />}
         />
 
         {/* 6. Route cho Admin (bây giờ dùng state `role`) */}
@@ -70,7 +70,9 @@ function App() {
         {/* 7. Route cho User (bây giờ dùng state `role`) */}
         {/* Logic này sẽ ĐÚNG sau khi state được cập nhật */}
         <Route
-          element={role === "USER" ? <Layout /> : <Navigate to="/login" replace />}
+          element={
+            role === "USER" ? <Layout /> : <Navigate to="/login" replace />
+          }
         >
           {/* Chat */}
           <Route path="/chat" element={<ChatView />} />
@@ -79,7 +81,7 @@ function App() {
 
           {/* Các trang bạn bè */}
           <Route path="/search-friends" element={<SearchFriends />} />
-          
+
           <Route
             path="/friend-requests"
             element={<FriendRequests onAccept={fetchFriends} />}
@@ -89,7 +91,7 @@ function App() {
 
         {/* 8. TRANG MẶC ĐỊNH (giữ nguyên như code của bạn) */}
         <Route index element={<Home />} />
-        
+
         {/* 404 Not found */}
         <Route
           path="*"
