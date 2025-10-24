@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosClient from "./api/axiosClient";
+import LoadingModal from "./LoadingModal";
 
 const Login = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-  
-  // 1. Thêm state isLoading
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
-    // 2. Bật loading ngay khi nhấn
     setIsLoading(true);
-
     try {
       const res = await axiosClient.post("/api/auth/login", {
         username,
@@ -35,14 +32,15 @@ const Login = ({ onLoginSuccess }) => {
     } catch (error) {
       alert("Login failed: " + (error.response?.data || "Unknown error"));
     } finally {
-      // 3. Tắt loading (bất kể thành công hay thất bại)
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 p-4">
-      <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-lg overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 via-blue-200 to-blue-300 p-4 relative">
+      {isLoading && <LoadingModal />} {}
+
+      <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-3xl shadow-lg overflow-hidden z-10">
         {/* Ảnh bên trái */}
         <div className="md:basis-1/2 bg-[url('/avtLogin.png')] bg-cover bg-center h-48 md:h-auto"></div>
 
@@ -68,23 +66,19 @@ const Login = ({ onLoginSuccess }) => {
             onChange={(e) => setPassword(e.target.value)}
           />
 
-          {/* 4. Cập nhật nút Login */}
           <button
             onClick={handleLogin}
-            // Thêm class cho trạng thái disabled và vô hiệu hóa nút khi loading
-            className="w-full max-w-xs bg-blue-900 text-white rounded-md py-2 font-serif hover:bg-blue-800 transition
-                       disabled:bg-gray-400 disabled:cursor-not-allowed" // Thêm class này
-            disabled={isLoading} // Vô hiệu hóa nút khi isLoading = true
+            className="w-full max-w-xs bg-blue-900 text-white rounded-md py-2 font-serif hover:bg-blue-800 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            {/* 5. Thay đổi text khi đang loading */}
             {isLoading ? "Đang đăng nhập..." : "Login"}
           </button>
 
           <div className="text-sm text-gray-600 mt-4">OR</div>
 
-          <button 
-             className="w-full max-w-xs bg-white border border-red-500 text-red-600 rounded-md py-2 mt-3 hover:bg-red-500 hover:text-white transition font-serif"
-             disabled={isLoading} // Cũng nên vô hiệu hóa nút này
+          <button
+            className="w-full max-w-xs bg-white border border-red-500 text-red-600 rounded-md py-2 mt-3 hover:bg-red-500 hover:text-white transition font-serif"
+            disabled={isLoading}
           >
             Login with Google
           </button>
@@ -93,8 +87,9 @@ const Login = ({ onLoginSuccess }) => {
             Don’t have an account?{" "}
             <Link
               to="/register"
-              // Ngăn người dùng nhấn link khi đang loading
-              className={`text-blue-700 font-semibold hover:text-blue-500 ${isLoading ? "pointer-events-none opacity-50" : ""}`}
+              className={`text-blue-700 font-semibold hover:text-blue-500 ${
+                isLoading ? "pointer-events-none opacity-50" : ""
+              }`}
             >
               Sign Up
             </Link>
