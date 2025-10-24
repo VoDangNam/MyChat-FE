@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
-import axiosClient from "./api/axiosClient"; // ✅ Dùng axiosClient thay vì axios
+import axiosClient from "../api/axiosClient";
+
 
 export default function Layout() {
   const [friends, setFriends] = useState([]);
