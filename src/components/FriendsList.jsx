@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import axiosClient from "./api/axiosClient"; // ✅ Dùng axiosClient thay vì axios trực tiếp
+import axiosClient from "../api/axiosClient";
+ // ✅ Dùng axiosClient thay vì axios trực tiếp
 
 function FriendsList() {
   const [friends, setFriends] = useState([]);
